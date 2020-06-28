@@ -90,7 +90,7 @@ class UsersController extends AppController
             $response = [
                 'success' => false,
                 'message' => $e->getMessage(),
-              ];
+            ];
         }
         
        $this->set($response);
@@ -105,19 +105,38 @@ class UsersController extends AppController
      */
     public function edit($id = null)
     {
-        $user = $this->Users->get($id, [
-            'contain' => [],
-        ]);
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            $user = $this->Users->patchEntity($user, $this->request->getData());
-            if ($this->Users->save($user)) {
-                $this->Flash->success(__('The user has been saved.'));
 
-                return $this->redirect(['action' => 'index']);
-            }
-            $this->Flash->error(__('The user could not be saved. Please, try again.'));
+        try{
+            if (!$this->request->is(['patch', 'post', 'put'])) throw new Exception(__('invalid_request'), 'method_not_allowed');
+            $user = $this->Users->get($id, [
+                'contain' => [],
+            ]);
+            $user = $this->Users->patchEntity($user, $this->request->getData());
+            $this->Users->save($user);
+            
+            $response = [
+                'success' => true,
+            ];
+        } catch(\Exception $e){
+            $response = [
+                'success' => false,
+                'message' => $e->getMessage(),
+              ];
         }
-        $this->set(compact('user'));
+
+        // $user = $this->Users->get($id, [
+        //     'contain' => [],
+        // ]);
+        // if ($this->request->is(['patch', 'post', 'put'])) {
+        //     $user = $this->Users->patchEntity($user, $this->request->getData());
+        //     if ($this->Users->save($user)) {
+        //         $this->Flash->success(__('The user has been saved.'));
+
+        //         return $this->redirect(['action' => 'index']);
+        //     }
+        //     $this->Flash->error(__('The user could not be saved. Please, try again.'));
+        // }
+        $this->set($response);
     }
 
     /**
@@ -193,10 +212,52 @@ class UsersController extends AppController
         }
     }
 
-    public function logout()
-    {
-        $session = $this->request->session();
-        $session->destroy();
-        return $this->redirect($this->Auth->logout());
+    /**
+   * Logout
+   *
+   * @author sayed al momin
+   * @method GET
+   * @header
+   * @return
+   * @redirect
+   * @throws
+   * @access
+   * @static
+   * @since 10/16/2019
+   */
+  public function logout()
+  {
+      try{
+        $authorizationHeader = $this->request->getHeaderLine('Authorization');
+        $oauth_token = substr($authorizationHeader, 7);    
+        $oauthTokenAccessTableReg = TableRegistry::get('OauthTokenAccess');
+        $params=[
+             'token !=' => '',
+          ];
+        if(!empty($oauth_token)){
+            $params['OR']['token'] = $oauth_token;
+            $params['OR']['refresh_token'] = $oauth_token;
+        }  
+        $isAuthorizedUser = $oauthTokenAccessTableReg->userStatus($params);
+        if(!empty($isAuthorizedUser)){        
+          $isAuthorizedUser->disabled=1;
+          $oauthTokenAccessTableReg->save($isAuthorizedUser); 
+          $response = [            
+                'success' => true,
+                'message' => __d('oauth', 'logout_successfully'),
+            ];   
+       
+        }else{
+    
+          throw new InternalErrorException('not_logout_successfully', 'bad_request');
+        }
+      } catch(\Exception $e){
+        $response = [
+            'success' => false,
+            'message' => $e->getMessage(),
+        ];
     }
+   
+    $this->set($response); 
+  }
 }

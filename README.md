@@ -30,7 +30,7 @@ Url: http://localhost/cake_api/api/users/register
 Http method: POST
 Accept Header application/json
 Content-Type Header application/json
-Body: data with username and password in JSON format. For example:
+Body: data with email and password in JSON format. For example:
 
 {
 	"email": "test@test.com",
@@ -41,7 +41,33 @@ If all goes well, a success message 201 will be returned via JSON:
 ```sh
 {
     "success": true,
-    "loggedIn": null,
+    "baseUrl": "http://localhost/cake_api/"
+}
+```
+
+```sh
+Url: http://localhost/cake_api/api/
+Http method: POST
+Accept Header application/json
+Content-Type Header application/json
+Body: data with email and password in JSON format. For example:
+
+{
+	"email": "test@test.com",
+	"password": "123456",
+}
+```
+If all goes well, a success message 201 will be returned via JSON:
+```sh
+{
+    "success": true,
+    "message": "login_success",
+    "expired": 1593360244,
+    "refreshExprired": 1593361144,
+    "data": {
+        "token": "{{user token}}",
+        "refresh_token": "{{user refresh token}}"
+    },
     "baseUrl": "http://localhost/cake_api/"
 }
 ```

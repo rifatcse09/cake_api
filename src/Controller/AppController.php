@@ -33,7 +33,7 @@ class AppController extends Controller
     public function beforeFilter(Event $event)
     {
         $this->Auth->allow(['index','view']);
-        $this->set('loggedIn', $this->Auth->user());
+        //$this->set('loggedIn', $this->Auth->user());
     }
 
     /**
@@ -82,7 +82,7 @@ class AppController extends Controller
         ]);
         $baseUrl = Router::url('/', true);
         $action = $this->request->action;
-        if($action !='login'){
+        if($action !='login'&& $action !='logout' && $action !='add'){
             $authorizationHeader = $this->request->getHeaderLine('Authorization');
             $oauth_token = substr($authorizationHeader, 7);
             $oauthTokenAccessTableReg = TableRegistry::get('OauthTokenAccess');
@@ -91,7 +91,7 @@ class AppController extends Controller
             ];
             if(!empty($oauth_token)){
                 $params['OR']['token'] = $oauth_token;
-               // $params['OR']['refresh_token'] = $oauth_token;
+                $params['OR']['refresh_token'] = $oauth_token;
             }
             $isAuthorizedUser = $oauthTokenAccessTableReg->userStatus($params);
             if(!empty($isAuthorizedUser)){
