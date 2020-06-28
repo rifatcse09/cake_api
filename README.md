@@ -3,9 +3,6 @@
 A skeleton for creating a REST API using CakePHP 3 with the awesome plugins JWT Authentication and CRUD.
 ## Installation
 
-1. Download [Composer](https://getcomposer.org/doc/00-intro.md) or update `composer self-update`.
-2. Run `php composer.phar create-project --prefer-dist cakephp/app [app_name]`.
-
 If Composer is installed globally got to project folder, run
 
 ```bash
@@ -23,9 +20,31 @@ After that, if all goes well, the API can now be tested through a REST Client as
 You can access or retrieve data in two ways: by API or browser request. By the way, in this project, only the API requires some authorization (by JWT, but I'll explain later), if you try to access the data by browser request, you will get it. For example:
 
 ```sh
-http://localhost/cake_api/cocktails
+http://localhost/cake_api/test
 ```
 
+To get permission, you need to have a valid JWT. To get one, you must follow the following steps. With the chosen REST Client, use these settings:
+
+```sh
+Url: http://localhost/cake_api/api/users/register
+Http method: POST
+Accept Header application/json
+Content-Type Header application/json
+Body: data with username and password in JSON format. For example:
+
+{
+	"email": "test@test.com",
+	"password": "123456",
+}
+
+If all goes well, a success message 201 will be returned via JSON:
+```sh
+{
+    "success": true,
+    "loggedIn": null,
+    "baseUrl": "http://localhost/cake_api/"
+}
+```
 ## Update
 
 Since this skeleton is a starting point for your application and various files
