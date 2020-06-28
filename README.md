@@ -36,7 +36,7 @@ Body: data with email and password in JSON format. For example:
 	"email": "test@test.com",
 	"password": "123456",
 }
-
+```
 If all goes well, a success message 201 will be returned via JSON:
 ```sh
 {
