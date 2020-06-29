@@ -5,6 +5,7 @@ use App\Controller\AppController;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Security;
 use Firebase\JWT\JWT;
+use Oil\Exception;
 
 /**
  * Users Controller
@@ -45,7 +46,7 @@ class UsersController extends AppController
      */
     public function index()
     {
-        $users = $this->Users;
+        $users = $this->Users->find('all');
         $response = [
             'success' => true,
             'message' => __d('oauth', 'user_list_info'),
@@ -63,11 +64,22 @@ class UsersController extends AppController
      */
     public function view($id = null)
     {
-        $user = $this->Users->get($id, [
-            'contain' => [],
-        ]);
-
-        $this->set('user', $user);
+        try{
+            $user = $this->Users->get($id, [
+                'contain' => [],
+            ]);
+            $response = [
+                'success' => true,
+                'message' => __d('oauth', 'user_info'),
+                'users' => $user
+            ];
+        } catch(\Exception $e){
+            $response = [
+                'success' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+        $this->set($response);   
     }
 
     /**
@@ -124,18 +136,6 @@ class UsersController extends AppController
               ];
         }
 
-        // $user = $this->Users->get($id, [
-        //     'contain' => [],
-        // ]);
-        // if ($this->request->is(['patch', 'post', 'put'])) {
-        //     $user = $this->Users->patchEntity($user, $this->request->getData());
-        //     if ($this->Users->save($user)) {
-        //         $this->Flash->success(__('The user has been saved.'));
-
-        //         return $this->redirect(['action' => 'index']);
-        //     }
-        //     $this->Flash->error(__('The user could not be saved. Please, try again.'));
-        // }
         $this->set($response);
     }
 
@@ -148,17 +148,40 @@ class UsersController extends AppController
      */
     public function delete($id = null)
     {
-        $this->request->allowMethod(['post', 'delete']);
-        $user = $this->Users->get($id);
-        if ($this->Users->delete($user)) {
-            $this->Flash->success(__('The user has been deleted.'));
-        } else {
-            $this->Flash->error(__('The user could not be deleted. Please, try again.'));
+
+        try{
+            if (!$this->request->is(['patch', 'post', 'put'])) throw new Exception(__('invalid_request'), 'method_not_allowed');
+            $user = $this->Users->get($id);           
+            $this->Users->delete($user);
+            
+            $response = [
+                'success' => true,
+                'message' => 'Deleted Successfully',
+            ];
+        } catch(\Exception $e){
+            $response = [
+                'success' => false,
+                'message' => $e->getMessage(),
+              ];
         }
 
-        return $this->redirect(['action' => 'index']);
+        $this->set($response);
     }
-
+  /**
+   * Login
+   *
+   * @author Rifat rifatcse09@gmail.com
+   * @method POST
+   * @param string|null $email
+   * @param string|null $password
+   * @header
+   * @return
+   * @redirect
+   * @throws
+   * @access
+   * @static
+   * @since 29/06/2020
+   */
     public function login()
     {
         if ($this->request->is('post')) {
@@ -212,10 +235,10 @@ class UsersController extends AppController
         }
     }
 
-    /**
+   /**
    * Logout
    *
-   * @author sayed al momin
+   * @author Rifat rifatcse09@gmail.com
    * @method GET
    * @header
    * @return
@@ -223,7 +246,7 @@ class UsersController extends AppController
    * @throws
    * @access
    * @static
-   * @since 10/16/2019
+   * @since 29/06/2020
    */
   public function logout()
   {

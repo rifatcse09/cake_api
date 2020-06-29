@@ -44,7 +44,7 @@ If all goes well, a success message 201 will be returned via JSON:
     "baseUrl": "http://localhost/cake_api/"
 }
 ```
-
+For login use email and password in body section
 ```sh
 Url: http://localhost/cake_api/api/
 Http method: POST
@@ -65,11 +65,17 @@ If all goes well, a success message 201 will be returned via JSON:
     "expired": 1593360244,
     "refreshExprired": 1593361144,
     "data": {
-        "token": "{{user token}}",
-        "refresh_token": "{{user refresh token}}"
+        "token": "{{your token}}",
+        "refresh_token": "{{your refresh token}}"
     },
     "baseUrl": "http://localhost/cake_api/"
 }
+```
+##Accessing the API
+After obtaining your token, you will get permission to access all the API, using the Authorization Header with the generated JWT, with the following format:
+
+```sh
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhbGciOiJIUzI1NiIsImlkIjozLCJzdWIiOjMsImlhdCI6MTU5MzQ0MDc4MCwiZXhwIjoxNTkzNDQxMDgwfQ.eCofm-_k15aXyK0kv4ZPRIYW4IQF2RW7hJ4ErMQP4gU
 ```
 ## Update
 
@@ -114,6 +120,56 @@ Setup `AuthComponent`:
         ]);
     }
 ```
+
+#### Index (retrieve all cocktails):
+```sh
+URL http://cake3api.app/api/cocktails
+HTTP Method GET
+Accept Header application/json
+Authorization Header containing Bearer {YOUR-JWT-TOKEN}
+```
+
+#### View (retrieve a specific cocktail):
+```sh
+URL http://localhost/api/users/2
+HTTP Method GET
+Accept Header application/json
+Authorization Header containing Bearer {YOUR-JWT-TOKEN}
+```
+
+#### Add (create a new user):
+```sh
+URL http://localhost/api/users/register
+HTTP Method POST
+Accept Header application/json
+Content-type Header aplication/json
+Body in JSON format:
+{
+	"email": "test@test.com",
+	"password": "123456",
+}
+```
+#### Edit (update a user info):
+```sh
+URL http://localhost/api/users/edit/5
+HTTP Method PUT
+Accept Header application/json
+Content-type Header aplication/json
+Authorization Header containing Bearer {YOUR-JWT-TOKEN}
+Body in JSON format (partial or all content):
+{ 
+	"email": "your@email.com"
+}
+```
+
+#### Delete:
+```sh
+URL http://localhost/api/users/5
+HTTP Method DELETE
+Accept Header application/json
+Authorization Header containing Bearer {YOUR-JWT-TOKEN}
+```
+This project is completely extensible and was built with the premise to be a case study, so you can create your own controllers using this skeleton as a base.
 ## Working
 
 The authentication class checks for the token in two locations:
@@ -155,12 +211,4 @@ Users model and find record matching the "id" field.**
 You can set the `queryDatasource` option to `false` to directly return the token's
 payload as user info without querying datasource for matching user record.
 
-## Further reading
 
-For an end to end usage example check out [this](http://www.bravo-kernel.com/2015/04/how-to-add-jwt-authentication-to-a-cakephp-3-rest-api/) blog post by Bravo Kernel.
-
-## Layout
-
-The app skeleton uses a subset of [Foundation](http://foundation.zurb.com/) (v5) CSS
-framework by default. You can, however, replace it with any other library or
-custom styles.
