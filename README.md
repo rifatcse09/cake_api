@@ -71,7 +71,7 @@ If all goes well, a success message 201 will be returned via JSON:
     "baseUrl": "http://localhost/cake_api/"
 }
 ```
-##Accessing the API
+## Accessing the API
 After obtaining your token, you will get permission to access all the API, using the Authorization Header with the generated JWT, with the following format:
 
 ```sh
