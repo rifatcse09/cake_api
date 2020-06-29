@@ -165,7 +165,7 @@ Body in JSON format (partial or all content):
 #### Delete:
 ```sh
 URL http://localhost/api/users/5
-HTTP Method DELETE
+HTTP Method POST
 Accept Header application/json
 Authorization Header containing Bearer {YOUR-JWT-TOKEN}
 ```
