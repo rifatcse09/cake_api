@@ -123,13 +123,13 @@ Setup `AuthComponent`:
 
 #### Index (retrieve all cocktails):
 ```sh
-URL http://cake3api.app/api/cocktails
+URL http://localhost/api/users
 HTTP Method GET
 Accept Header application/json
 Authorization Header containing Bearer {YOUR-JWT-TOKEN}
 ```
 
-#### View (retrieve a specific cocktail):
+#### View (retrieve a specific user):
 ```sh
 URL http://localhost/api/users/2
 HTTP Method GET
